@@ -29,7 +29,7 @@
           <el-tab-pane :label="activeTopic" name="first">
                 <span slot="label"><i class="el-icon-monitor"></i> {{activeTopic}}</span>
                 <div class="request">
-                    <span class="tit">Response</span>
+                    <span class="tit">Request</span>
                     <div class="divider"></div>
                    <b-code-editor v-model="requestJson" :indent-unit="4" height="100%" style="text-align: left" v-loading="requestLoading"/>
                 </div>
