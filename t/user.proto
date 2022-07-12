@@ -1,0 +1,32 @@
+syntax = "proto3";
+package user;
+option go_package = "./user_pb";
+
+message RegistReq {
+  string userName = 1;
+  string passWord = 2;
+  string code = 3;
+  string email = 4;
+}
+
+message RegistResp {
+  int32 code = 1;
+  string msg = 2;
+}
+
+message CheckRegistReq {
+  string email = 1;
+  string username = 2;
+}
+
+
+
+service User {
+  rpc RegistAccount(RegistReq) returns(RegistResp);
+  rpc CheckRegist (CheckRegistReq) returns (RegistResp);
+}
+
+service Another {
+  rpc RegistAccount2(RegistReq) returns(RegistResp);
+  rpc CheckRegist2 (CheckRegistReq) returns (RegistResp);
+}
