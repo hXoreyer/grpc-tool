@@ -28,15 +28,15 @@ func main() {
 
 **添加grpc的地址，会得到服务名字和其方法**
 
-![](https://github.com/hxoreyer/grpc-tool/png/1.png)
+![](https://github.com/hXoreyer/grpc-tool/blob/master/png/1.png)
 
 **点击方法将会在request区域显示其参数**
 
-![](https://github.com/hxoreyer/grpc-tool/png/2.png)
+![](https://github.com/hXoreyer/grpc-tool/blob/master/png/2.png)
 
 **中间按钮点击即可发送请求**
 
-![](https://github.com/hxoreyer/grpc-tool/png/3.png)
+![](https://github.com/hXoreyer/grpc-tool/blob/master/png/3.png)
 
 > 工具还不完善，大家发现bug啥的可以留言哈
 >
