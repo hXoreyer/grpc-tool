@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { LinkOutline } from '@vicons/ionicons5/'
 import MethodMenu from './MethodMenu.vue';
-import { ref } from 'vue'
+import { onMounted, ref } from 'vue'
 import { AddFile, SetFile } from '../types/request'
 import { useNotification } from 'naive-ui';
 import useVStore from '../api/useVStore';

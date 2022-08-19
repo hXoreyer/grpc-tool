@@ -10,6 +10,9 @@ contextBridge.exposeInMainWorld(
         },
         receive: (channel, func) => {
             ipcRenderer.on(channel, (event, ...args) => func(...args));
+        },
+        invoke: (channel, data) => {
+            return ipcRenderer.invoke(channel,data)
         }
     }
 );

@@ -1,7 +1,7 @@
 {
     "name": "grpc-tool",
     "private": true,
-    "version": "2.0.0",
+    "version": "2.0.1",
     "type": "module",
     "main": "electron/main.cjs",
     "scripts": {
@@ -14,7 +14,7 @@
     },
     "build": {
         "productName": "grpc-tool",
-        "copyright": "Copyright © 2021 <hxoreyer>",
+        "copyright": "Copyright © 2022 <hxoreyer>",
         "nsis": {
             "oneClick": false,
             "allowToChangeInstallationDirectory": true
@@ -24,8 +24,8 @@
             "electron/**/*"
         ],
         "extraResources": {
-            "from": "resources/gRpcTool.exe",
-            "to": "./gRpcTool.exe"
+            "from": "resources",
+            "to": "./"
         },
         "directories": {
             "buildResources": "assets",
@@ -55,6 +55,7 @@
         "seemly": "^0.3.5",
         "typescript": "^4.6.4",
         "vite": "^3.0.0",
+        "vite-plugin-top-level-await": "^1.1.1",
         "vue-tsc": "^0.38.4",
         "wait-on": "^6.0.1"
     }

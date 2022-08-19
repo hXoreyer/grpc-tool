@@ -1,20 +1,6 @@
 <template>
   <n-input-group>
     <n-input v-model:value="pattern" placeholder="搜索" size="small" style="margin-bottom: 1rem" />
-    <!---
-    <n-popover trigger="hover">
-      <template #trigger>
-        <n-button size="small" type="info">
-          <template #icon>
-            <n-icon>
-              <Refresh />
-            </n-icon>
-          </template>
-        </n-button>
-      </template>
-      <span>刷新</span>
-    </n-popover>
-    -->
   </n-input-group>
   <n-tree :show-irrelevant-nodes="true" :pattern="pattern" :data="data.data" block-line v-if="bShow"
     :node-props="ClickTree" />
@@ -31,12 +17,12 @@
 
 <script setup lang="ts">
 import { h, ref, reactive, watch, onMounted } from 'vue'
-import { DropdownOption, NButton, NIcon, TreeOption, useNotification } from 'naive-ui'
-import { InformationCircleOutline, ReceiptOutline, Infinite, Refresh } from '@vicons/ionicons5'
+import { DropdownOption, NIcon, TreeOption, useNotification } from 'naive-ui'
+import { InformationCircleOutline, ReceiptOutline, Infinite } from '@vicons/ionicons5'
 import TreeNode from '../types/treenodes'
 import useVStore from '../api/useVStore'
-import { GetMethodParam, SetFile } from '../types/request'
-import { jsonType } from '../store'
+import { AddFile, SetFile, GetMethodParam } from '../types/request'
+import { menuType, menuChildType, jsonType } from '../store'
 
 const notification = useNotification()
 const store = useVStore()
@@ -126,12 +112,49 @@ const GetParam = async (serviceName, methodName, url, key) => {
     const {
       data: res
     } = await GetMethodParam(serviceName, methodName, url)
-
     let newVal: jsonType = {
       name: key,
       data: res.methods
     }
     store.commit('setJsonVal', newVal)
+  } catch (error) {
+    notification['error']({
+      content: '错误',
+      meta: '刷新错误',
+      duration: 2500,
+      keepAliveOnHover: true
+    })
+  }
+}
+
+const GetMethods = async (url) => {
+  try {
+    const {
+      data: res
+    } = await AddFile(url)
+    let da = res.services
+    let newVal: menuType = {
+      key: da.key,
+      name: da.name,
+      childs: []
+    }
+    for (let i = 0; i < da.methods.length; i++) {
+      let method: menuChildType = {
+        father: '',
+        inputType: '',
+        name: '',
+        outputType: '',
+        url: ''
+      }
+      method.father = da.methods[i].father
+      method.inputType = da.methods[i].inputType
+      method.name = da.methods[i].name
+      method.outputType = da.methods[i].outputType
+      method.url = da.methods[i].url
+      newVal.childs.push(method)
+    }
+    store.commit('setMenuVal', newVal)
+    setFile()
   } catch (error) {
     notification['error']({
       content: '错误',
@@ -145,19 +168,23 @@ const GetParam = async (serviceName, methodName, url, key) => {
 
 const HandleSelect = (key: string | number, option: DropdownOption) => {
   showDropdown.value = false
-  if (clickOption.children) return
   let st = store.getters.getMenuVal
   if (key === 'delete') {
-    for (let i = 0; i < st.length; i++) {
-      for (let j = 0; j < st[i].childs.length; j++) {
-        let name = st[i].key + ":" + st[i].childs[j].name
-        if (name === clickOption.key) {
-          store.commit('deleteMenuChildVal', { index: i, ci: j })
-          if (store.getters.getMenuVal[i].childs.length === 0) {
-            store.commit('deleteMenuVal', i)
+    if (clickOption.children) {
+      store.commit('deleteMenuByKey', clickOption.key)
+      setFile()
+    } else {
+      for (let i = 0; i < st.length; i++) {
+        for (let j = 0; j < st[i].childs.length; j++) {
+          let name = st[i].key + ":" + st[i].childs[j].name
+          if (name === clickOption.key) {
+            store.commit('deleteMenuChildVal', { index: i, ci: j })
+            if (store.getters.getMenuVal[i].childs.length === 0) {
+              store.commit('deleteMenuVal', i)
+            }
+            setFile()
+            return
           }
-          setFile()
-          return
         }
       }
     }
@@ -183,13 +210,18 @@ const HandleSelect = (key: string | number, option: DropdownOption) => {
       keepAliveOnHover: true
     })
   } else if (key === 'update') {
-    let me = store.getters.getMenuVal
-    for (let i = 0; i < me.length; i++) {
-      for (let j = 0; j < me[i].childs.length; j++) {
-        let keyname = me[i].key + ":" + me[i].childs[j].name
-        if (clickOption.key === keyname) {
-          GetParam(me[i].childs[j].father, me[i].childs[j].name, me[i].childs[j].url, keyname)
-          return
+    if (clickOption.children) {
+      let pr = clickOption.key.toString().split("::")
+      GetMethods(pr[0])
+    } else {
+      let me = store.getters.getMenuVal
+      for (let i = 0; i < me.length; i++) {
+        for (let j = 0; j < me[i].childs.length; j++) {
+          let keyname = me[i].key + ":" + me[i].childs[j].name
+          if (clickOption.key === keyname) {
+            GetParam(me[i].childs[j].father, me[i].childs[j].name, me[i].childs[j].url, keyname)
+            return
+          }
         }
       }
     }

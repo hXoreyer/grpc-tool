@@ -123,6 +123,7 @@ const query = async (serviceName, methodName, url, data, key) => {
             data: res
         }
         st.push(newVal)
+        loading.value = false
     } catch (error) {
         notification['error']({
             content: '错误',

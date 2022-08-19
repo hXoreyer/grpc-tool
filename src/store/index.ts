@@ -82,6 +82,13 @@ const store = createStore<storeType>({
         deleteMenuChildVal(state,val){
             state.menuVals.arr[val.index].childs.splice(val.ci,1)
         },
+        deleteMenuByKey(state,key) {
+            for(let i = 0; i < state.menuVals.arr.length; i++) {
+                if(state.menuVals.arr[i].key === key) {
+                    state.menuVals.arr.splice(i,1)
+                }
+            }
+        },
         addTabVal(state,val) {
             state.tabVals.push(val)
         },
@@ -93,6 +100,13 @@ const store = createStore<storeType>({
         },
         setNewTab(state,val){
             state.newTab = val
+        },
+        setMenuVal(state,val) {
+            for(let i = 0; i < state.menuVals.arr.length; i++) {
+                if(state.menuVals.arr[i].key === val.key) {
+                    state.menuVals.arr[i].childs = val.childs
+                }
+            }
         }
     },
     getters: {
