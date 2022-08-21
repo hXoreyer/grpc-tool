@@ -54,7 +54,7 @@ const handleClose = (name: string) => {
     const nameIndex = panels.findIndex((panelName) => panelName === name)
     if (!~nameIndex) return
     panels.splice(nameIndex, 1)
-    store.commit('deleteTabVal',nameIndex)
+    store.commit('deleteTabVal', nameIndex)
     if (name === pvalue.value) {
         pvalue.value = panels.at(-1)
     }
@@ -97,33 +97,37 @@ onMounted(() => {
     }
 })
 
+const setReturn = (key,res) => {
+    let st = store.getters.getReturnVal
+    if (st.length === 0) {
+        let newVal: jsonType = {
+            name: key,
+            data: res
+        }
+        st.push(newVal)
+    }
+    for (let i = 0; i < st.length; i++) {
+        if (key === st[i].name) {
+            st[i].data = res
+            loading.value = false
+            return
+        }
+    }
+    let newVal: jsonType = {
+        name: key,
+        data: res
+    }
+    st.push(newVal)
+    loading.value = false
+}
+
 const query = async (serviceName, methodName, url, data, key) => {
     loading.value = true
     try {
         const {
             data: res
         } = await Query(serviceName, methodName, url, data)
-        let st = store.getters.getReturnVal
-        if (st.length === 0) {
-            let newVal: jsonType = {
-                name: key,
-                data: res
-            }
-            st.push(newVal)
-        }
-        for (let i = 0; i < st.length; i++) {
-            if (key === st[i].name) {
-                st[i].data = res
-                loading.value = false
-                return
-            }
-        }
-        let newVal: jsonType = {
-            name: key,
-            data: res
-        }
-        st.push(newVal)
-        loading.value = false
+        setReturn(key,res)
     } catch (error) {
         notification['error']({
             content: '错误',
@@ -131,6 +135,7 @@ const query = async (serviceName, methodName, url, data, key) => {
             duration: 2500,
             keepAliveOnHover: true
         })
+        setReturn(key,{error: error.response.data})
         loading.value = false
     }
 }
@@ -156,8 +161,8 @@ const RequestForm = () => {
 
 </script>
 <template>
-    <n-tabs v-model:value="pvalue" type="card" :closable="closable" @close="handleClose"
-        @add="handleAdd" @update:value="changeVal">
+    <n-tabs v-model:value="pvalue" type="card" :closable="closable" @close="handleClose" @add="handleAdd"
+        @update:value="changeVal">
         <n-tab-pane v-for="panel in panels" :key="panel" :name="panel" display-directive="show">
             <div class="content">
                 <div class="left">
