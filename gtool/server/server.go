@@ -29,14 +29,12 @@ type ListInfo struct {
 
 type Service struct {
 	Name    string   `json:"name"`
-	Icon    string   `json:"icon"`
 	Methods []Method `json:"methods"`
 	Key     string   `json:"key"`
 }
 
 type Method struct {
 	Name       string `json:"name"`
-	Icon       string `json:"icon"`
 	InputType  string `json:"inputType"`
 	OutputType string `json:"outputType"`
 	Father     string `json:"father"`
@@ -66,21 +64,24 @@ func (r *RefServer) ListService() error {
 	}
 
 	ret := ListInfo{}
-
-	//获取service信息
-	s, err := r.RefClient.ResolveService(strs[2])
+	//获取service信息s
+	for i := 0; i < len(strs); i++ {
+		if strs[i] == "grpc.health.v1.Health" || strs[i] == "grpc.reflection.v1alpha.ServerReflection" {
+			strs = append(strs[:i], strs[i+1:]...)
+			i--
+		}
+	}
+	s, err := r.RefClient.ResolveService(strs[0])
 	if err != nil {
 		log.Println("ResolveError", err)
 		return err
 	}
 	ret.Service = Service{}
-	ret.Service.Icon = "http://127.0.0.1:10580/assets/s.png"
 	ret.Service.Name = s.GetFullyQualifiedName()
 	ret.Service.Key = r.url + "::" + ret.Service.Name
 	methods := s.GetMethods()
 	ret.Service.Methods = make([]Method, len(methods))
 	for k, v := range methods {
-		ret.Service.Methods[k].Icon = "http://127.0.0.1:10580/assets/m.png"
 		ret.Service.Methods[k].Name = v.GetName()
 		ret.Service.Methods[k].InputType = v.GetInputType().GetName()
 		ret.Service.Methods[k].OutputType = v.GetOutputType().GetName()

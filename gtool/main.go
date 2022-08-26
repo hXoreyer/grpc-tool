@@ -89,7 +89,6 @@ func main() {
 	r := gin.Default()
 
 	r.Use(Cors())
-	r.Static("/assets", "./assets")
 
 	r.POST("/LinkMethods", LinkMethods)
 	r.POST("/MethodParam", GetMethodParam)
