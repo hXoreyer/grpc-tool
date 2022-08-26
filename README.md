@@ -40,7 +40,7 @@ func main() {
 
 > 工具还不完善，大家发现bug啥的可以留言哈
 >
-> 下载地址:  https://github.com/hXoreyer/grpc-tool/releases/tag/v1.1
+> 下载地址:  https://github.com/hXoreyer/grpc-tool/releases
 >
 > 视频演示:  https://www.bilibili.com/video/BV1JZ4y1Y7yr/
 
